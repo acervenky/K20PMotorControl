@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:gravity="center">
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content">
+
+		<Button
+			android:onClick="popup"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="升起"/>
+
+		<Button
+			android:onClick="takeback"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="降下"/>
+
+	</LinearLayout>
+
+		<TextView
+			android:onClick="openHomePage"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="开发者：真心 点击打开个人主页"
+			android:gravity="center"/>
+
+</LinearLayout>
+

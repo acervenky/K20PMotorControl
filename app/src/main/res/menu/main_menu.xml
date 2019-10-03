@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<item
+        android:id="@+id/join_Group"
+        android:title="加群交流"/>
+	<item
+        android:id="@+id/alipay"
+        android:title="打赏"/>
+</menu>
