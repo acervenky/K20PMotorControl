@@ -35,8 +35,6 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "获取Root权限失败，请检查是否给予本软件Root权限！", Toast.LENGTH_LONG).show();
             finish();
         }
-		
-		startFloatingButtonService();
     }
 
 	public void popup(View view)
@@ -111,35 +109,5 @@ public class MainActivity extends AppCompatActivity
 			return false;
 		}
 	}
-
-	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-	{
-        if (requestCode == 0)
-		{
-            if (!Settings.canDrawOverlays(this))
-			{
-                Toast.makeText(this, "授权失败", Toast.LENGTH_SHORT).show();
-            }
-			else
-			{
-                Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
-                startService(new Intent(MainActivity.this, FloatingButtonService.class));
-            }
-        }
-    }
-
-    public void startFloatingButtonService()
-	{
-        intent = new Intent(this, FloatingService.class);
-        intent.putExtra(FloatingService.ACTION, FloatingService.HIDE);
-        if (Build.VERSION.SDK_INT >= 26) {
-            startForegroundService(intent);
-        } else {
-            startService(intent);
-        }
-        fileListener.stopWatching();
-        stopService(intent);
-    }
 
 }
