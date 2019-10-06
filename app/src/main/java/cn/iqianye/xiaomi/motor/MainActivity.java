@@ -1,12 +1,17 @@
 package cn.iqianye.xiaomi.motor;
 
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.jaredrummler.android.shell.Shell;
@@ -17,6 +22,11 @@ public class MainActivity extends AppCompatActivity
 	String appCachePath;
     String popupCommand = "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/xiaomi-motor.bin popup 1";
 	String takebackCommand = "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/xiaomi-motor.bin takeback 1";
+	
+	private WindowManager wm;
+	private WindowManager.LayoutParams wmParams;
+	private FloatView myFV;
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState)
 	{
@@ -29,12 +39,25 @@ public class MainActivity extends AppCompatActivity
         {
             Toast.makeText(this, "不支持MIUI系统，请使用类原生或Flyme系统！", Toast.LENGTH_LONG).show();
             finish();
-        }else
+        }
+		else
 		if (!OtherUtils.checkRoot()) // 检测ROOT
         {
             Toast.makeText(this, "获取Root权限失败，请检查是否给予本软件Root权限！", Toast.LENGTH_LONG).show();
             finish();
         }
+		else
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+		{
+			if (!Settings.canDrawOverlays(this))
+			{
+				startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 0);
+			}
+			else
+			{
+				createFloatView();
+			}
+		}
     }
 
 	public void popup(View view)
@@ -110,4 +133,49 @@ public class MainActivity extends AppCompatActivity
 		}
 	}
 
+	private void createFloatView()
+	{
+		myFV = new FloatView(getApplicationContext());
+		myFV.setImageResource(R.mipmap.icon);
+		// 获取WindowManager
+		 wm = (WindowManager) getApplicationContext().getSystemService("window");
+		// 设置LayoutParams(全局变量）相关参数
+	    wmParams = ((ApplicationClass) getApplication()).getMywmParams();
+
+		wmParams.type = LayoutParams.TYPE_PHONE;// 设置window type
+		wmParams.format = PixelFormat.RGBA_8888;// 设置图片格式，效果为背景透明
+		// 设置Window flag
+		wmParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL
+			| LayoutParams.FLAG_NOT_FOCUSABLE;
+		/*
+		 * 
+		 * 下面的flags属性的效果形同“锁定”。
+		 * 
+		 * 悬浮窗不可触摸，不接受任何事件,同时不影响后面的事件响应。
+		 * 
+		 * wmParams.flags=LayoutParams.FLAG_NOT_TOUCH_MODAL
+		 * 
+		 * | LayoutParams.FLAG_NOT_FOCUSABLE
+		 * 
+		 * | LayoutParams.FLAG_NOT_TOUCHABLE;
+		 */
+		wmParams.gravity = Gravity.LEFT | Gravity.TOP;// 调整悬浮窗口至左上角，便于调整坐标
+		// 以屏幕左上角为原点，设置x、y初始值
+		wmParams.x = 0;
+		wmParams.y = 0;
+		// 设置悬浮窗口长宽数据
+		wmParams.width = 40;
+		wmParams.height = 40;
+		// 显示myFloatView图像
+		wm.addView(myFV, wmParams);
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		// 在程序退出(Activity销毁）时销毁悬浮窗口
+		wm.removeView(myFV);
+	}
 }

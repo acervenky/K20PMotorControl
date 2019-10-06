@@ -8,7 +8,7 @@ android {
         applicationId "cn.iqianye.xiaomi.motor"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1909210
+        versionCode 1910060
         versionName "1.0.1"
     }
     buildTypes {
