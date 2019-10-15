@@ -23,10 +23,6 @@ public class MainActivity extends AppCompatActivity
     String popupCommand = "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/xiaomi-motor.bin popup 1";
 	String takebackCommand = "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/xiaomi-motor.bin takeback 1";
 	
-	private WindowManager wm;
-	private WindowManager.LayoutParams wmParams;
-	private FloatView myFV;
-	
 	@Override
     protected void onCreate(Bundle savedInstanceState)
 	{
@@ -35,7 +31,7 @@ public class MainActivity extends AppCompatActivity
 
 		appCachePath = getExternalCacheDir().getAbsolutePath();
 		AssetsUtils.copyFolderFromAssetsToSD(this, "files", appCachePath + "/");
-        if (!OtherUtils.isMIUI()) // 检测MIUI
+        if (OtherUtils.isMIUI()) // 检测MIUI
         {
             Toast.makeText(this, "不支持MIUI系统，请使用类原生或Flyme系统！", Toast.LENGTH_LONG).show();
             finish();
@@ -55,7 +51,7 @@ public class MainActivity extends AppCompatActivity
 			}
 			else
 			{
-				createFloatView();
+				Toast.makeText(this, "悬浮窗功能开发中，暂不可用！", Toast.LENGTH_LONG).show();
 			}
 		}
     }
@@ -131,51 +127,5 @@ public class MainActivity extends AppCompatActivity
 			// 未安装手Q或安装的版本不支持
 			return false;
 		}
-	}
-
-	private void createFloatView()
-	{
-		myFV = new FloatView(getApplicationContext());
-		myFV.setImageResource(R.mipmap.icon);
-		// 获取WindowManager
-		 wm = (WindowManager) getApplicationContext().getSystemService("window");
-		// 设置LayoutParams(全局变量）相关参数
-	    wmParams = ((ApplicationClass) getApplication()).getMywmParams();
-
-		wmParams.type = LayoutParams.TYPE_PHONE;// 设置window type
-		wmParams.format = PixelFormat.RGBA_8888;// 设置图片格式，效果为背景透明
-		// 设置Window flag
-		wmParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL
-			| LayoutParams.FLAG_NOT_FOCUSABLE;
-		/*
-		 * 
-		 * 下面的flags属性的效果形同“锁定”。
-		 * 
-		 * 悬浮窗不可触摸，不接受任何事件,同时不影响后面的事件响应。
-		 * 
-		 * wmParams.flags=LayoutParams.FLAG_NOT_TOUCH_MODAL
-		 * 
-		 * | LayoutParams.FLAG_NOT_FOCUSABLE
-		 * 
-		 * | LayoutParams.FLAG_NOT_TOUCHABLE;
-		 */
-		wmParams.gravity = Gravity.LEFT | Gravity.TOP;// 调整悬浮窗口至左上角，便于调整坐标
-		// 以屏幕左上角为原点，设置x、y初始值
-		wmParams.x = 0;
-		wmParams.y = 0;
-		// 设置悬浮窗口长宽数据
-		wmParams.width = 40;
-		wmParams.height = 40;
-		// 显示myFloatView图像
-		wm.addView(myFV, wmParams);
-	}
-
-	@Override
-	protected void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		// 在程序退出(Activity销毁）时销毁悬浮窗口
-		wm.removeView(myFV);
 	}
 }
