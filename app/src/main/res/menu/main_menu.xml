@@ -4,8 +4,14 @@
 
 	<item
         android:id="@+id/join_Group"
-        android:title="加群交流"/>
+        android:title="Join QQ"/>
 	<item
         android:id="@+id/alipay"
-        android:title="打赏"/>
+        android:title="Donate"/>
+	<item
+		android:id="@+id/set_out"
+		android:title="Set Cam Out"/>
+	<item
+		android:id="@+id/set_in"
+		android:title="Set Cam In"/>
 </menu>

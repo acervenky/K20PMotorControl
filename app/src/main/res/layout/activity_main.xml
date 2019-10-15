@@ -14,22 +14,26 @@
 			android:onClick="popup"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="升起"/>
+			android:text="Popup"/>
 
 		<Button
 			android:onClick="takeback"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="降下"/>
+			android:text="Takeback"/>
 
 	</LinearLayout>
 
 		<TextView
-			android:onClick="openHomePage"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="开发者：真心 点击打开个人主页"
+			android:text="Original Author : ZhenXin"
 			android:gravity="center"/>
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Translation and Safety Measures : acervenky"
+		android:gravity="center"/>
 
 </LinearLayout>
 

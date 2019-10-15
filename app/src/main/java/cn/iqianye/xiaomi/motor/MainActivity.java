@@ -15,6 +15,12 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.jaredrummler.android.shell.Shell;
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraManager.AvailabilityCallback;
+import android.os.Handler;
+
 
 public class MainActivity extends AppCompatActivity
 {
@@ -22,7 +28,8 @@ public class MainActivity extends AppCompatActivity
 	String appCachePath;
     String popupCommand = "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/xiaomi-motor.bin popup 1";
 	String takebackCommand = "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/xiaomi-motor.bin takeback 1";
-	
+	public int pos=2;
+
 	@Override
     protected void onCreate(Bundle savedInstanceState)
 	{
@@ -51,31 +58,39 @@ public class MainActivity extends AppCompatActivity
 			}
 			else
 			{
-				Toast.makeText(this, "悬浮窗功能开发中，暂不可用！", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Set Initial Status via Menu", Toast.LENGTH_LONG).show();
 			}
 		}
     }
 
 	public void popup(View view)
 	{
-		Shell.SU.run("cp -r " + appCachePath + "/* /data/local/tmp");
-		Shell.SU.run("chmod 777 /data/local/tmp/*");
-		Shell.SU.run(popupCommand);
-		Shell.SU.run("rm -f /data/local/tmp/*");
+		if(pos==0) {
+				Shell.SU.run("cp -r " + appCachePath + "/* /data/local/tmp");
+				Shell.SU.run("chmod 777 /data/local/tmp/*");
+				Shell.SU.run(popupCommand);
+				pos = 1;
+				Shell.SU.run("rm -f /data/local/tmp/*");
+		}
+		else{
+			Toast.makeText(this, "Camera Already Popped Out", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	public void takeback(View view)
 	{
-		Shell.SU.run("cp -r " + appCachePath + "/* /data/local/tmp");
-		Shell.SU.run("chmod 777 /data/local/tmp/*");
-		Shell.SU.run(takebackCommand);
-		Shell.SU.run("rm -f /data/local/tmp/*");
+		if(pos==1) {
+			Shell.SU.run("cp -r " + appCachePath + "/* /data/local/tmp");
+			Shell.SU.run("chmod 777 /data/local/tmp/*");
+			Shell.SU.run(takebackCommand);
+			pos = 0;
+			Shell.SU.run("rm -f /data/local/tmp/*");
+		}
+		else{
+			Toast.makeText(this, "Camera Already Retracted", Toast.LENGTH_LONG).show();
+		}
 	}
 
-	public void openHomePage(View view)
-	{
-		OtherUtils.openUrl("https://www.zhenxin.xyz", this);
-	}
 
 
 	@Override
@@ -96,6 +111,12 @@ public class MainActivity extends AppCompatActivity
                 break;
 		    case R.id.alipay:
 				OtherUtils.openUrl("https://qr.alipay.com/tsx08529pzn1idznbmfobf7", this);
+				break;
+			case R.id.set_out:
+				pos=1;
+				break;
+			case R.id.set_in:
+				pos=0;
 				break;
 			default:
 				break;
