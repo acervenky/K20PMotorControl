@@ -20,6 +20,11 @@ import android.content.Context;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraManager.AvailabilityCallback;
 import android.os.Handler;
+import android.hardware.camera2.CameraManager;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.Handler;
 
 
 public class MainActivity extends AppCompatActivity
@@ -148,5 +153,52 @@ public class MainActivity extends AppCompatActivity
 			// 未安装手Q或安装的版本不支持
 			return false;
 		}
+	}
+
+
+	private CameraManager mCameraManager;
+	private Object mCameraCallback;
+	Handler mHandler;
+
+	protected void serv1(Bundle savedInstanceState) {
+		mCameraManager = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			mCameraCallback = new CameraManager.AvailabilityCallback() {
+				@Override
+				public void onCameraAvailable(String cameraId) {
+					super.onCameraAvailable(cameraId);
+					if(pos==1) {
+						Shell.SU.run("cp -r " + appCachePath + "/* /data/local/tmp");
+						Shell.SU.run("chmod 777 /data/local/tmp/*");
+						Shell.SU.run(takebackCommand);
+						pos = 0;
+						Shell.SU.run("rm -f /data/local/tmp/*");
+					}
+					Toast.makeText(getApplicationContext(), "camera off", Toast.LENGTH_SHORT).show();
+				}
+
+				@Override
+				public void onCameraUnavailable(String cameraId) {
+					super.onCameraUnavailable(cameraId);
+					if(pos==0) {
+						Shell.SU.run("cp -r " + appCachePath + "/* /data/local/tmp");
+						Shell.SU.run("chmod 777 /data/local/tmp/*");
+						Shell.SU.run(popupCommand);
+						pos = 1;
+						Shell.SU.run("rm -f /data/local/tmp/*");
+					}
+					Toast.makeText(getApplicationContext(), "camera on", Toast.LENGTH_SHORT).show();
+				}
+			};
+
+			mCameraManager.registerAvailabilityCallback((CameraManager.AvailabilityCallback) mCameraCallback,mHandler);
+		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+			mCameraManager.unregisterAvailabilityCallback((CameraManager.AvailabilityCallback) mCameraCallback);
 	}
 }
